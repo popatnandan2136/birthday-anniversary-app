@@ -24,7 +24,7 @@ const login = async (req, res) => {
     }
 
     // Find user by email
-    const user = await User.findOne({ email: email.toLowerCase() });
+    const user = await User.findOne({ email: email.toLowerCase() }).select('+password');
 
     if (!user) {
       return res.status(401).json({
@@ -91,8 +91,6 @@ const login = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: 'An error occurred during login. Please try again.',
-      error: error.message,
-      stack: error.stack
     });
   }
 };
