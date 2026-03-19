@@ -9,6 +9,6 @@
     }
   ],
   "env": {
-    "VITE_API_URL": "https://birthday-anniversary-api.vercel.app/api"
+    "VITE_API_URL": "https://api-iota-ten-69.vercel.app"
   }
 }
