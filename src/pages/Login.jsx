@@ -7,7 +7,7 @@ import { validateEmail, validatePassword } from '../utils/validation';
 
 export const LoginPage = () => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, login: authLogin } = useAuth();
   const { error: showError, loading: showLoading } = useNotification();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -46,7 +46,7 @@ export const LoginPage = () => {
 
     setLoading(true);
     try {
-      await authAPI.login(email, password);
+      await authLogin(email, password);
       navigate('/admin', { replace: true });
     } catch (err) {
       const errorMessage = err.response?.data?.message || 'Login failed';
