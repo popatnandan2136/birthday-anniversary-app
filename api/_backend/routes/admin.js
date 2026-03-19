@@ -29,14 +29,6 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
 });
 
-// Create upload directory if it doesn't exist (handled by vercel or system tmp)
-// We don't need fs.mkdirSync for os.tmpdir() usually, but multer needs it.
-const fs = require('fs');
-const uploadDir = path.join(os.tmpdir(), 'birthday-uploads');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-
 // Image Upload
 router.post(
   '/upload-image',
