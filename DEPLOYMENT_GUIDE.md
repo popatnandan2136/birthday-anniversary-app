@@ -5,8 +5,9 @@ Complete step-by-step guide to deploy the Birthday & Anniversary Celebration Web
 ## Prerequisites
 
 - ✅ Project setup complete (see README.md)
-- ✅ Firebase project configured (see FIREBASE_SETUP.md)
-- ✅ `.env.local` file with Firebase credentials
+- ✅ Project setup complete (see README.md)
+- ✅ MongoDB Atlas account
+- ✅ Cloudinary account
 - ✅ GitHub account
 - ✅ Vercel account (free tier available)
 
@@ -76,19 +77,17 @@ Follow prompts:
 
 1. Go to your project
 2. Settings → Environment Variables
-3. Add each variable from `.env.local`:
+3. Add the following variables:
 
-```
-VITE_FIREBASE_API_KEY = AIza...
-VITE_FIREBASE_AUTH_DOMAIN = project.firebaseapp.com
-VITE_FIREBASE_PROJECT_ID = project-id
-VITE_FIREBASE_STORAGE_BUCKET = project.appspot.com
-VITE_FIREBASE_MESSAGING_SENDER_ID = 123456789
-VITE_FIREBASE_APP_ID = 1:123456789:web:abc...
-VITE_FIREBASE_MEASUREMENT_ID = G-ABC...
-```
+**For Frontend:**
+- `VITE_API_URL` = `/api` (unified deployment)
 
-4. Click "Save"
+**For Backend:**
+- `MONGODB_URI` = your_mongodb_connection_string
+- `JWT_SECRET` = your_secure_jwt_secret
+- `CLOUDINARY_CLOUD_NAME` = your_cloud_name
+- `CLOUDINARY_API_KEY` = your_api_key
+- `CLOUDINARY_API_SECRET` = your_api_secret
 
 ### Deploy
 
@@ -258,11 +257,10 @@ npm run build --verbose
 2. Verify in Vercel Settings → Environment Variables
 3. Redeploy after adding/changing variables
 
-### Firebase Connection Issues
+### Database Connection Issues
 
-1. Check Firebase credentials are correct
-2. Verify Firestore/Storage rules allow public read
-3. Check browser console for errors (F12)
+1. Check MongoDB credentials and connection string.
+2. Verify Network Access in MongoDB Atlas (allow 0.0.0.0/0 for Vercel).
 
 ### Slow Initial load
 

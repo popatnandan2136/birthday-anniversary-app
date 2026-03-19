@@ -7,12 +7,12 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
-const connectDB = require('../config/database');
-const errorHandler = require('../middleware/errorHandler');
-const authRoutes = require('../routes/auth');
-const masterAdminRoutes = require('../routes/masterAdmin');
-const adminRoutes = require('../routes/admin');
-const publicRoutes = require('../routes/public');
+const connectDB = require('./config/database');
+const errorHandler = require('./middleware/errorHandler');
+const authRoutes = require('./routes/auth');
+const masterAdminRoutes = require('./routes/masterAdmin');
+const adminRoutes = require('./routes/admin');
+const publicRoutes = require('./routes/public');
 
 const app = express();
 

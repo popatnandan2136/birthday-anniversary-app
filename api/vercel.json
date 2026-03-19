@@ -1,15 +1,15 @@
 {
-  "buildCommand": "npm install",
-  "devCommand": "npm start",
-  "env": {
-    "NODE_ENV": "production",
-    "MONGODB_URI": "mongodb+srv://nandanpoapt_db_user:NKkH11KMA3pV8rrn@birthday-aniversaey-web.4wsfwez.mongodb.net/",
-    "JWT_SECRET": "BirthdayAnniversary$ecureJWT$ecret@2026!Prod",
-    "CLOUDINARY_CLOUD_NAME": "your_cloud_name",
-    "CLOUDINARY_API_KEY": "your_api_key",
-    "CLOUDINARY_API_SECRET": "your_api_secret",
-    "FRONTEND_URL": "https://celebration-website-gamma.vercel.app"
-  },
-  "installCommand": "npm install"
+  "version": 2,
+  "builds": [
+    {
+      "src": "vercel-handler.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "vercel-handler.js"
+    }
+  ]
 }
-

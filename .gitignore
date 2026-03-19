@@ -34,6 +34,9 @@ private.key
 firebase.json
 firestore.rules
 storage.rules
+write-sa.js
+check-bucket.js
+cors.json
 
 # Vercel
 .vercel

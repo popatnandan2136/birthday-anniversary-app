@@ -5,8 +5,8 @@ A production-ready React application that allows admins to create personalized, 
 ## 🚀 Features
 
 ### Admin Panel (`/admin`)
-- ✅ Email/password authentication via Firebase
-- ✅ Secure protected routes
+- ✅ Secure JWT-based authentication
+- ✅ Protected protected routes
 - ✅ Dashboard with wish management
 - ✅ View, Edit, Delete, Activate/Deactivate wishes
 - ✅ Copy public links and generate QR codes
@@ -37,7 +37,7 @@ A production-ready React application that allows admins to create personalized, 
 - ✅ Multiple photo uploads
 - ✅ Optional video upload (max 100MB)
 - ✅ Background music upload (max 20MB)
-- ✅ Firebase Storage integration
+- ✅ Cloudinary integration for media storage
 - ✅ Automatic URL management
 
 ### Animations
@@ -57,19 +57,20 @@ A production-ready React application that allows admins to create personalized, 
 - React Router 6.20+
 
 **Backend:**
-- Firebase Firestore (database)
-- Firebase Storage (file uploads)
-- Firebase Authentication (email/password)
+- MongoDB Atlas (database)
+- Cloudinary (file uploads)
+- JWT (authentication)
+- Node.js & Express (API server)
 
 **Deployment:**
-- Vercel (frontend)
-- Firebase (backend & storage)
+- Vercel (frontend & backend)
 
 ## 🛠️ Setup & Installation
 
 ### Prerequisites
 - Node.js 18+ and npm 9+
-- Firebase project setup
+- MongoDB Atlas account
+- Cloudinary account
 - Vercel account (for deployment)
 
 ### Step 1: Clone & Install
@@ -80,55 +81,33 @@ cd "BirthdayAniversary Web"
 npm install
 ```
 
-### Step 2: Firebase Configuration
+### Step 2: Backend Configuration
 
-1. Create a Firebase project at [console.firebase.google.com](https://console.firebase.google.com)
-2. Enable:
-   - Authentication (Email/Password)
-   - Firestore Database
-   - Cloud Storage
-3. Copy your config credentials
+1. Create a MongoDB Atlas cluster.
+2. Create a Cloudinary account and get your API credentials.
+3. Configure your JWT secret for authentication.
 
 ### Step 3: Environment Variables
 
-Create `.env.local` in the project root:
+Create `.env.local` in the project root (for frontend):
 
 ```env
-VITE_FIREBASE_API_KEY=your_api_key
-VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
-VITE_FIREBASE_PROJECT_ID=your_project_id
-VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
-VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-VITE_FIREBASE_APP_ID=your_app_id
-VITE_FIREBASE_MEASUREMENT_ID=your_measurement_id
+VITE_API_URL=http://localhost:3001/api
 ```
 
-### Step 4: Firebase Setup
+Create `.env` in the `api/` directory (for backend):
 
-#### Create admin user in Firebase Console:
-1. Go to Authentication → Users
-2. Add a new user (Email & Password)
-3. Note the credentials for testing
-
-#### Setup Firestore security rules:
-
-```javascript
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    // Allow public read for active wishes only
-    match /wishes/{document=**} {
-      allow read: if resource.data.status == 'active';
-      allow write: if request.auth != null;
-      allow delete: if request.auth != null;
-    }
-  }
-}
+```env
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_secure_jwt_secret
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
 ```
 
-#### Configure Firebase Storage:
+### Step 4: Environment Variables on Vercel
 
-Allow public read for active wish media, restrict writes to authenticated users.
+Make sure to add all variables from Step 3 to your Vercel project settings.
 
 ### Step 5: Run Development Server
 
@@ -172,13 +151,8 @@ src/
 │   └── anniversary/     # 6 anniversary templates
 │       ├── index.jsx    # All anniversary templates export
 │       └── ...
-├── firebase/            # Firebase services
-│   ├── firebaseConfig.js
-│   ├── firestoreService.js
-│   ├── storageService.js
-│   └── authService.js
-├── contexts/            # React Context
-│   └── AuthContext.jsx
+├── services/            # API services (axios)
+│   └── apiService.js
 ├── hooks/               # Custom hooks
 │   ├── useAuth.js
 │   ├── useResponsive.js
@@ -376,10 +350,9 @@ colors: {
 - Normal for first build
 - Can be optimized with code-splitting later
 
-**Firebase errors:**
-- Verify `.env.local` has correct credentials
-- Check Firebase project is initialized
-- Ensure Firestore & Storage rules are set
+**Database errors:**
+- Verify MongoDB connection string.
+- Check if your IP is whitelisted in MongoDB Atlas.
 
 **Dependency conflicts:**
 - `.npmrc` file includes `legacy-peer-deps=true`
@@ -424,30 +397,28 @@ colors: {
 
 ## 📝 API Reference
 
-### Firestore Service
+The application uses a unified `apiService.js` to interact with the backend.
 
-```javascript
-// CRUD Operations
-createWish(wishData)                    // Create new wish
-updateWish(wishId, wishData)           // Update wish
-deleteWish(wishId)                     // Delete wish
-getWishById(wishId)                    // Get by ID
-getWishBySlug(slug)                    // Get public wish
-getAllWishes(pageSize, lastDoc)        // Paginated list
-getWishesByType(type, pageSize)       // Filter by type
-toggleWishStatus(wishId, status)      // Toggle active/inactive
-```
+### Auth API
+- `login(email, password)`
+- `logout()`
+- `getCurrentUser()`
 
-### Storage Service
+### Website API
+- `createWebsite(data)`
+- `getAdminWebsites()`
+- `getWebsite(id)`
+- `updateWebsite(id, data)`
+- `deleteWebsite(id)`
 
-```javascript
-uploadFile(file, folder)               // Upload any file
+### Image API
+- `uploadImage(file)`
+- `uploadImages(files)`
 uploadPhotos(files)                    // Upload multiple photos
 uploadVideo(file)                      // Upload single video
 uploadMusic(file)                      // Upload single audio
 deleteFile(fileURL)                    // Delete from storage
 deleteFiles(fileURLs)                  // Delete multiple files
-```
 
 ### Auth Service
 
