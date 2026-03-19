@@ -5,7 +5,7 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "/api/vercel-handler.js"
+      "destination": "/api/index.js"
     },
     {
       "source": "/:path*",
@@ -13,8 +13,7 @@
     }
   ],
   "functions": {
-    "api/vercel-handler.js": {
-      "runtime": "vercel-node@latest",
+    "api/index.js": {
       "memory": 1024,
       "maxDuration": 10
     }
