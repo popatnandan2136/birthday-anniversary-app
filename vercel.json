@@ -12,6 +12,13 @@
       "destination": "/index.html"
     }
   ],
+  "functions": {
+    "api/vercel-handler.js": {
+      "runtime": "vercel-node@latest",
+      "memory": 1024,
+      "maxDuration": 10
+    }
+  },
   "env": {
     "VITE_API_URL": "/api"
   }
