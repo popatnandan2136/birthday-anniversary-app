@@ -91,7 +91,8 @@ const login = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: 'An error occurred during login. Please try again.',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined,
+      error: error.message,
+      stack: error.stack
     });
   }
 };
