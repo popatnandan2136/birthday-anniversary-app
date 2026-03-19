@@ -109,6 +109,18 @@ service firebase.storage {
 
 3. Publish rules
 
+## Step 7.1: Configure CORS for Storage
+
+To allow your Vercel-deployed application to upload photos to Firebase Storage, you must configure CORS (Cross-Origin Resource Sharing) for your storage bucket.
+
+1.  Make sure you have the [Google Cloud CLI](https://cloud.google.com/sdk/docs/install) installed.
+2.  In your terminal, run the following command from the root of this project:
+   ```bash
+   gsutil cors set cors.json gs://birthday-anniversary-app-2136.firebasestorage.app
+   ```
+
+This will apply the configuration in `cors.json` to your bucket, allowing requests from your Vercel production URL.
+
 ## Step 8: Get Firebase Configuration
 
 1. Go to **Project Settings** (gear icon)
@@ -186,10 +198,10 @@ VITE_FIREBASE_MEASUREMENT_ID=G-ABC...
 npm install -g firebase-tools
 
 # Initialize emulator
-firebase init emulator
+firebase init emulators
 
 # Start emulator
-firebase emulator:start
+firebase emulators:start
 ```
 
 Then update `.env.local` to use emulator:

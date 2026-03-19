@@ -27,5 +27,14 @@ dist-ssr
 .env.local
 .env.*.local
 
+# Firebase & Sensitive files
+service-account.json
+private.key
+.firebaserc
+firebase.json
+firestore.rules
+storage.rules
+
 # Vercel
 .vercel
+.env*.local

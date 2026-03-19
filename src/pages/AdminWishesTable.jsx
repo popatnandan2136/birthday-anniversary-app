@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import AdminDashboard from './AdminDashboard';
-import { getAllWishes, toggleWishStatus, deleteWish } from '../firebase/firestoreService';
-import { deleteFiles } from '../firebase/storageService';
+import { websiteAPI } from '../services/apiService';
 import { useNotification } from '../hooks/useNotification';
 import { formatDate, getRelativeTime } from '../utils/formatDate';
 import { useResponsive } from '../hooks/useResponsive';
@@ -24,16 +23,17 @@ export const AdminWishesTable = () => {
   const loadWishes = async () => {
     setLoading(true);
     try {
-      const { wishes: data, hasMore: more } = await getAllWishes(20);
-      let filtered = data;
+      const response = await websiteAPI.getAdminWebsites(1, 20);
+      let data = response.websites || response.data || [];
+      
       if (filter !== 'all') {
-        filtered = data.filter((w) => w.type === filter);
+        data = data.filter((w) => w.type === filter);
       }
-      setWishes(filtered);
-      setHasMore(more);
+      setWishes(data);
+      setHasMore(response.pagination?.hasMore || false);
       setPage(0);
     } catch (err) {
-      showError('Failed to load wishes');
+      showError('Failed to load websites');
       console.error(err);
     } finally {
       setLoading(false);
@@ -42,36 +42,26 @@ export const AdminWishesTable = () => {
 
   const handleToggleStatus = async (wishId, currentStatus) => {
     try {
-      const newStatus = await toggleWishStatus(wishId, currentStatus);
+      const updatedWebsite = await websiteAPI.toggleWebsite(wishId);
+      const newStatus = updatedWebsite.active ? 'active' : 'inactive';
       setWishes((prev) =>
-        prev.map((w) => (w.id === wishId ? { ...w, status: newStatus } : w))
+        prev.map((w) => (w.id === wishId ? { ...w, status: newStatus, active: updatedWebsite.active } : w))
       );
-      success(`Wish ${newStatus === 'active' ? 'activated' : 'deactivated'}`);
+      success(`Website ${newStatus === 'active' ? 'activated' : 'deactivated'}`);
     } catch (err) {
-      showError('Failed to update wish status');
+      showError('Failed to update website status');
     }
   };
 
   const handleDeleteWish = async (wishId) => {
-    if (!window.confirm('Are you sure you want to delete this wish?')) return;
+    if (!window.confirm('Are you sure you want to delete this website?')) return;
 
     try {
-      const wish = wishes.find((w) => w.id === wishId);
-      const filesToDelete = [
-        ...(wish.photos || []),
-        ...(wish.video ? [wish.video] : []),
-        ...(wish.music ? [wish.music] : []),
-      ];
-
-      if (filesToDelete.length > 0) {
-        await deleteFiles(filesToDelete);
-      }
-
-      await deleteWish(wishId);
+      await websiteAPI.deleteWebsite(wishId);
       setWishes((prev) => prev.filter((w) => w.id !== wishId));
-      success('Wish deleted successfully');
+      success('Website deleted successfully');
     } catch (err) {
-      showError('Failed to delete wish');
+      showError('Failed to delete website');
       console.error(err);
     }
   };
@@ -88,7 +78,7 @@ export const AdminWishesTable = () => {
         <div className="flex justify-center items-center h-64">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading wishes...</p>
+            <p className="text-gray-600">Loading websites...</p>
           </div>
         </div>
       </AdminDashboard>
@@ -105,7 +95,7 @@ export const AdminWishesTable = () => {
       >
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <h1 className="text-3xl font-bold text-gray-800">All Wishes</h1>
+          <h1 className="text-3xl font-bold text-gray-800">All Websites</h1>
           <div className="flex gap-2">
             {['all', 'birthday', 'anniversary'].map((type) => (
               <button
@@ -126,7 +116,7 @@ export const AdminWishesTable = () => {
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-white p-4 rounded-lg shadow">
-            <p className="text-gray-600 text-sm">Total Wishes</p>
+            <p className="text-gray-600 text-sm">Total Websites</p>
             <p className="text-3xl font-bold text-primary">{wishes.length}</p>
           </div>
           <div className="bg-white p-4 rounded-lg shadow">
@@ -146,7 +136,7 @@ export const AdminWishesTable = () => {
         {/* Table / Cards */}
         {wishes.length === 0 ? (
           <div className="bg-white rounded-lg shadow p-8 text-center">
-            <p className="text-gray-600 mb-4">No wishes yet. Create one to get started!</p>
+            <p className="text-gray-600 mb-4">No websites yet. Create one to get started!</p>
           </div>
         ) : isMobile ? (
           // Mobile card view

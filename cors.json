@@ -1,8 +1,13 @@
 [
   {
-    "origin": ["http://localhost:3001", "http://localhost:3000"],
+    "origin": [
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "https://celebration-website-gamma.vercel.app",
+      "https://celebration-website-egryufqo2-popat-nandans-projects.vercel.app"
+    ],
     "method": ["GET", "HEAD", "DELETE", "PUT", "POST"],
-    "responseHeader": ["Content-Type"],
+    "responseHeader": ["Content-Type", "x-goog-meta-*"],
     "maxAgeSeconds": 3600
   }
 ]

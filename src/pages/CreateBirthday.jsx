@@ -3,10 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import AdminDashboard from './AdminDashboard';
 import FileUploader from '../components/FileUploader';
-import { createWish } from '../firebase/firestoreService';
-import { uploadPhotos, uploadVideo, uploadMusic } from '../firebase/storageService';
+import { websiteAPI, imageAPI } from '../services/apiService';
 import { useNotification } from '../hooks/useNotification';
-import { createUniqueSlug } from '../utils/generateSlug';
 import {
   RELATION_CHOICES,
   SISTER_TYPES,
@@ -136,43 +134,52 @@ export const CreateBirthdayWish = () => {
 
       // Upload photos
       if (photos.length > 0) {
-        photoUrls = await uploadPhotos(photos);
+        const uploadedPhotos = await imageAPI.uploadImages(photos);
+        photoUrls = uploadedPhotos;
       }
 
-      // Upload video
-      if (video.length > 0) {
-        [videoUrl] = await uploadVideo(video[0]);
+      // Upload video (optional)
+      if (video && video.length > 0) {
+        try {
+          const uploadedVideo = await imageAPI.uploadImage(video[0]);
+          videoUrl = uploadedVideo.url || uploadedVideo;
+        } catch (err) {
+          console.warn('Video upload failed:', err);
+        }
       }
 
-      // Upload music
-      if (music.length > 0) {
-        [musicUrl] = await uploadMusic(music[0]);
+      // Upload music (optional)
+      if (music && music.length > 0) {
+        try {
+          const uploadedMusic = await imageAPI.uploadImage(music[0]);
+          musicUrl = uploadedMusic.url || uploadedMusic;
+        } catch (err) {
+          console.warn('Music upload failed:', err);
+        }
       }
 
-      // Create wish document
-      const slug = createUniqueSlug(personName);
-
-      const wishData = {
+      // Create website with API
+      const websiteData = {
         type: 'birthday',
+        title: `${personName}'s Birthday`,
         personName,
         relation: getFinalRelation(),
-        ageGroup,
-        birthDate,
+        ageCategory: ageGroup ? ageGroup.split('-')[0] : 'adult',
+        ageGroup: ageGroup || 'N/A',
+        date: birthDate,
         message,
-        photos: photoUrls,
-        video: videoUrl || null,
-        music: musicUrl || null,
         template: selectedTemplate,
-        themeColor,
-        slug,
+        imageUrl: photoUrls && photoUrls.length > 0 ? photoUrls[0] : null,
       };
 
-      const wishId = await createWish(wishData);
-      success('Birthday wish created successfully!');
+      const response = await websiteAPI.createWebsite(websiteData);
+      
+      success('Birthday website created successfully!');
       navigate('/admin/wishes', { replace: true });
     } catch (err) {
       console.error(err);
-      showError('Failed to create wish. Please try again.');
+      const errorMessage = err.response?.data?.message || 'Failed to create website. Please try again.';
+      showError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -513,7 +520,7 @@ export const CreateBirthdayWish = () => {
               disabled={loading}
               className="flex-1 bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-2 px-4 rounded-lg transition"
             >
-              {loading ? 'Creating...' : '✓ Create Wish'}
+              {loading ? 'Creating...' : '✓ Create Website'}
             </button>
           )}
         </div>

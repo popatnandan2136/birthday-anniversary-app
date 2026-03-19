@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { logoutUser } from '../firebase/authService';
+import { authAPI } from '../services/apiService';
 import { useAuth } from '../hooks/useAuth';
 import { useResponsive } from '../hooks/useResponsive';
 import { useNotification } from '../hooks/useNotification';
@@ -14,7 +14,7 @@ export const AdminDashboard = ({ children, activeTab }) => {
 
   const handleLogout = async () => {
     try {
-      await logoutUser();
+      await authAPI.logout();
       success('Logged out successfully');
       navigate('/login', { replace: true });
     } catch (error) {

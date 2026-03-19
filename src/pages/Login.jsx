@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { loginUser } from '../firebase/authService';
+import { authAPI } from '../services/apiService';
 import { useAuth } from '../hooks/useAuth';
 import { useNotification } from '../hooks/useNotification';
 import { validateEmail, validatePassword } from '../utils/validation';
@@ -46,17 +46,10 @@ export const LoginPage = () => {
 
     setLoading(true);
     try {
-      await loginUser(email, password);
+      await authAPI.login(email, password);
       navigate('/admin', { replace: true });
     } catch (err) {
-      let errorMessage = 'Login failed';
-      if (err.code === 'auth/user-not-found') {
-        errorMessage = 'User not found';
-      } else if (err.code === 'auth/wrong-password') {
-        errorMessage = 'Incorrect password';
-      } else if (err.code === 'auth/invalid-email') {
-        errorMessage = 'Invalid email';
-      }
+      const errorMessage = err.response?.data?.message || 'Login failed';
       showError(errorMessage);
     } finally {
       setLoading(false);
