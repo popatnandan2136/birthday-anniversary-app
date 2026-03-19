@@ -3,12 +3,13 @@
   "devCommand": "npm start",
   "env": {
     "NODE_ENV": "production",
-    "MONGODB_URI": "@mongodb_uri",
-    "JWT_SECRET": "@jwt_secret",
-    "CLOUDINARY_CLOUD_NAME": "@cloudinary_cloud_name",
-    "CLOUDINARY_API_KEY": "@cloudinary_api_key",
-    "CLOUDINARY_API_SECRET": "@cloudinary_api_secret",
-    "FRONTEND_URL": "@frontend_url"
+    "MONGODB_URI": "mongodb+srv://nandanpoapt_db_user:NKkH11KMA3pV8rrn@birthday-aniversaey-web.4wsfwez.mongodb.net/",
+    "JWT_SECRET": "BirthdayAnniversary$ecureJWT$ecret@2026!Prod",
+    "CLOUDINARY_CLOUD_NAME": "your_cloud_name",
+    "CLOUDINARY_API_KEY": "your_api_key",
+    "CLOUDINARY_API_SECRET": "your_api_secret",
+    "FRONTEND_URL": "https://celebration-website-gamma.vercel.app"
   },
   "installCommand": "npm install"
 }
+
